@@ -8,6 +8,7 @@ from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 import logging
+from app.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -99,29 +100,7 @@ class Listing:
     def get_metadata(self):
         logger.debug("Getting metadata from OpenAI")
         messages = [
-            {"role": "system", "content": """You are a knowledgeable pricing analyst specializing in resale valuations. Assess items based on:
-
-                CONDITION SCALE:
-                - New with Tags (NWT): 90-100% of retail
-                - Like New: 70-85% of retail
-                - Good: 50-65% of retail
-                - Fair: 30-45% of retail
-                - Poor: 15-25% of retail
-
-                For each item, consider:
-                1. Brand value and current market demand
-                2. Age and technological relevance
-                3. Seasonal timing and local market conditions
-                4. Similar completed sales on eBay, Facebook Marketplace, and other platforms
-                5. Shipping costs and platform fees
-                6. Any unique features or collectible value
-
-                Provide a price range with:
-                - Quick-sale price (lower end for fast turnover)
-                - Target price (optimal balance of time/value)
-                - Maximum price (for rare/desirable items)
-
-                Include brief reasoning for the valuation and any relevant selling tips."""},
+            {"role": "system", "content": Config.PRICING_ANALYST_PROMPT},
             {"role": "user", "content": [
                 {"type": "text", "text": "Please analyze these images and provide a valuation for the items shown."},
                 *self.images
