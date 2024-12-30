@@ -1,5 +1,4 @@
 // static/js/main.js
-let currentBatch = 1;
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const thumbnailContainer = document.getElementById('thumbnailContainer');
@@ -92,7 +91,6 @@ takePhotoBtn.addEventListener('click', () => {
     capturedPhotos.push(imageData);
     updateThumbnails();
     updatePhotoCount();
-    showStatus('Photo captured!');
 });
 
 // Upload and process photos
@@ -102,7 +100,7 @@ uploadAndNextBtn.addEventListener('click', async () => {
         return;
     }
 
-    showStatus('Uploading and generating listing...', 999999);
+    showStatus('Creating Shopify listing...', 999999);
 
     try {
         const response = await fetch('/upload-and-next', {
@@ -111,7 +109,6 @@ uploadAndNextBtn.addEventListener('click', async () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                currentBatch: currentBatch,
                 images: capturedPhotos
             }),
         });
@@ -121,22 +118,21 @@ uploadAndNextBtn.addEventListener('click', async () => {
         if (data.success) {
             // Show the listing popup
             const popupRoot = document.getElementById('popup-root');
-            const metadata = data.metadata;
+            const shopifyProduct = data.shopify_product;
 
             ReactDOM.render(
                 React.createElement(ListingPopup, {
                     isOpen: true,
                     images: capturedPhotos,
-                    metadata: metadata,
+                    shopifyProduct: shopifyProduct,
                     onClose: () => {
                         ReactDOM.unmountComponentAtNode(popupRoot);
-
-                        // Reset for next batch
-                        currentBatch = data.nextBatch;
+                        // Reset for next listing
                         capturedPhotos = [];
                         updateThumbnails();
                         updatePhotoCount();
-                        showStatus(`Listed ${metadata.title} for sale!`);
+                        // Clear the status message
+                        status.style.display = 'none';
                     }
                 }),
                 popupRoot

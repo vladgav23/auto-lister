@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 class ListingMetadata(BaseModel):
     title: str
     description: str
+    category: str
+    tags: list[str]
     estimated_price: int
 
 
