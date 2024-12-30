@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Camera</title>
+    <!-- External Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Our styles -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="thumbnail-container" id="thumbnailContainer"></div>
+    <div class="thumbnail-count" id="photoCount">No photos</div>
+
+    <div id="camera-container">
+        <video id="video" playsinline webkit-playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <div id="prompt" class="camera-prompt">
+            <div>Camera access required</div>
+            <button id="startCamera" class="start-button">Start Camera</button>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="takePhoto" class="control-button" disabled>
+            <i class="fas fa-camera"></i>
+        </button>
+        <button id="uploadAndNext" class="control-button" disabled>
+            <i class="fas fa-check"></i>
+        </button>
+    </div>
+
+    <div id="status"></div>
+    <div id="popup-root"></div>
+
+    <!-- Load React and other dependencies -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+    <!-- Load your JavaScript files -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script type="text/babel" src="{{ url_for('static', filename='js/components/ListingPopup.jsx') }}"></script>
+</body>
+</html>

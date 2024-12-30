@@ -1,0 +1,269 @@
+/* static/css/styles.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont;
+}
+
+/* Camera container styles */
+#camera-container {
+    flex-grow: 1;
+    position: relative;
+    background: #000;
+}
+
+#video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#canvas {
+    display: none;
+}
+
+/* Thumbnail styles */
+.thumbnail-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 10px;
+    z-index: 2;
+}
+
+.thumbnail {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #007AFF;
+}
+
+.thumbnail-count {
+    position: absolute;
+    top: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    z-index: 2;
+}
+
+/* Control buttons */
+.controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    gap: 40px;
+    z-index: 2;
+}
+
+.control-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+#takePhoto {
+    background-color: #007AFF;
+}
+
+#uploadAndNext {
+    background-color: #34C759;
+}
+
+#uploadAndNext:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+/* Status message */
+#status {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+}
+
+/* Camera prompt */
+.camera-prompt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 4;
+}
+
+.start-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #007AFF;
+    color: white;
+    font-size: 16px;
+}
+
+/* Thumbnail wrapper */
+.thumbnail-wrapper {
+    position: relative;
+}
+
+.undo-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 59, 48, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Popup styles */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.popup-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+.image-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+.carousel-item {
+    flex: 0 0 auto;
+}
+
+.carousel-item img {
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+}
+
+.listing-details {
+    padding: 20px 0;
+}
+
+.price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #34C759;
+    margin-bottom: 12px;
+}
+
+.description {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.continue-button {
+    width: 100%;
+    padding: 12px;
+    background: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.continue-button:hover {
+    background: #0051D5;
+}
