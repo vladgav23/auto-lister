@@ -13,51 +13,69 @@ class ImageService:
         self.openai_client = openai_client
         self.shopify_service = ShopifyService()
 
-    def process_images(self, images):
-        """Process images and create Shopify listing"""
+    def process_image(self, image_data):
+        """Process a single image to crop it to square"""
+        # Remove the data URL prefix if present
+        if 'base64,' in image_data:
+            base64_data = image_data.split('base64,')[1]
+        else:
+            base64_data = image_data
+
+        # Decode base64 to image
+        image_bytes = base64.b64decode(base64_data)
+        image = Image.open(io.BytesIO(image_bytes))
+
+        # Calculate dimensions for square crop
+        width, height = image.size
+        size = min(width, height)
+        
+        # Calculate coordinates for center crop
+        left = (width - size) // 2
+        top = (height - size) // 2
+        right = left + size
+        bottom = top + size
+
+        # Crop the image
+        cropped_image = image.crop((left, top, right, bottom))
+
+        # Convert back to base64
+        img_byte_arr = io.BytesIO()
+        cropped_image.save(img_byte_arr, format='JPEG')
+        img_byte_arr.seek(0)
+        return base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+
+    def generate_metadata(self, images):
+        """Generate metadata using OpenAI"""
         if not images:
-            logger.warning("No images provided")
             raise ValueError("No images provided")
 
         logger.debug("Processing images")
+        # Crop images before sending to OpenAI
+        cropped_images = [f"data:image/jpeg;base64,{self.process_image(img)}" for img in images]
+        
+        logger.debug("Generating metadata using OpenAI")
+        listing = Listing.from_base64_list(cropped_images, self.openai_client)
+        return listing.get_metadata()
+
+    def create_shopify_listing(self, images, metadata):
+        """Create Shopify listing with provided metadata"""
+        if not images:
+            raise ValueError("No images provided")
+
+        logger.debug("Processing images for Shopify")
         
         # Process images in memory
         processed_images = []
-        for i, image_data in enumerate(images):
-            logger.debug(f"Processing image {i+1}")
-            
+        for image_data in images:
             # Remove the data URL prefix if present
             if 'base64,' in image_data:
                 base64_data = image_data.split('base64,')[1]
             else:
                 base64_data = image_data
 
-            # Decode base64 to image
+            # Decode base64 to bytes
             image_bytes = base64.b64decode(base64_data)
-            image = Image.open(io.BytesIO(image_bytes))
-
-            # Calculate dimensions for square crop
-            width, height = image.size
-            size = min(width, height)
-            
-            # Calculate coordinates for center crop
-            left = (width - size) // 2
-            top = (height - size) // 2
-            right = left + size
-            bottom = top + size
-
-            # Crop the image
-            cropped_image = image.crop((left, top, right, bottom))
-
-            # Convert back to bytes
-            img_byte_arr = io.BytesIO()
-            cropped_image.save(img_byte_arr, format='JPEG')
-            processed_images.append(img_byte_arr.getvalue())
-
-        # Generate metadata using the Listing class
-        logger.debug("Generating listing metadata")
-        listing = Listing.from_base64_list(images, self.openai_client)
-        metadata = listing.get_metadata()
+            processed_images.append(image_bytes)
 
         # Create Shopify listing
         try:
@@ -67,15 +85,7 @@ class ImageService:
             )
             return {
                 'success': True,
-                'shopify_product': {
-                    'title': shopify_product.title,
-                    'description': shopify_product.body_html,
-                    'price': shopify_product.variants[0].price if shopify_product.variants else None,
-                    'category': shopify_product.product_type,
-                    'tags': shopify_product.tags,
-                    'url': f"https://{Config.SHOPIFY_SHOP_URL}/products/{shopify_product.handle}",
-                    'images': [img.src for img in shopify_product.images] if hasattr(shopify_product, 'images') else []
-                }
+                'message': 'Listing created successfully'
             }
 
         except Exception as e:

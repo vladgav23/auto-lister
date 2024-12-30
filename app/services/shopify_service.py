@@ -25,15 +25,22 @@ class ShopifyService:
     def create_product(self, metadata, image_data):
         with shopify.Session.temp(Config.SHOPIFY_SHOP_URL, '2024-01', Config.SHOPIFY_ACCESS_TOKEN) as session:
             new_product = shopify.Product()
-            new_product.title = metadata.title
-            new_product.body_html = metadata.description
-            new_product.vendor = "Butler Warehouse"
-            new_product.product_type = metadata.category
-            new_product.tags = metadata.tags
             
-            # Create a variant with the price and proper inventory settings
+            # Handle required fields
+            new_product.title = metadata.get('title', '')
+            new_product.body_html = metadata.get('description', '')
+            new_product.vendor = "Butler Warehouse"
+            new_product.product_type = metadata.get('category', '')
+            
+            # Handle tags - ensure it's a list
+            tags = metadata.get('tags', [])
+            if isinstance(tags, str):
+                tags = [tag.strip() for tag in tags.split(',')]
+            new_product.tags = tags
+            
+            # Create a variant with the price
             variant = shopify.Variant({
-                'price': str(metadata.estimated_price)
+                'price': str(metadata.get('price', 0))  # Changed from estimated_price to price
             })
             new_product.variants = [variant]
             

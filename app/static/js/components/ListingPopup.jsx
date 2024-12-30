@@ -1,38 +1,92 @@
 // static/js/components/ListingPopup.jsx
-const ListingPopup = ({ isOpen, onClose, images, shopifyProduct }) => {
-    if (!isOpen || !shopifyProduct) return null;
+const ListingPopup = ({ isOpen, onClose, images, metadata, onConfirm }) => {
+    if (!isOpen || !metadata) return null;
+
+    const [editedMetadata, setEditedMetadata] = React.useState({
+        title: metadata.title || '',
+        description: metadata.description || '',
+        price: metadata.estimated_price || 0,
+        category: metadata.category || '',
+        tags: metadata.tags || []
+    });
+
+    const handleChange = (field, value) => {
+        setEditedMetadata(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleConfirm = () => {
+        onConfirm(editedMetadata);
+    };
   
     return (
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <div className="popup-header">
-            <h2>{shopifyProduct.title}</h2>
-            <button onClick={onClose} className="close-button">&times;</button>
-          </div>
-  
-          <div className="image-carousel">
-            {shopifyProduct.images.map((image, index) => (
-              <div key={index} className="carousel-item">
-                <img src={image} alt={`Product image ${index + 1}`} />
-              </div>
-            ))}
-          </div>
-  
-          <div className="listing-details">
-            <div className="price">${shopifyProduct.price}</div>
-            <div className="description">{shopifyProduct.description}</div>
-            <div className="category">Category: {shopifyProduct.category}</div>
-            <div className="url">
-              <a href={shopifyProduct.url} target="_blank" rel="noopener noreferrer">
-                View on Shopify
-              </a>
+        <div className="popup-overlay">
+            <div className="popup-content">
+                <div className="popup-header">
+                    <h2>Review Listing</h2>
+                    <button onClick={onClose} className="close-button">&times;</button>
+                </div>
+
+                <div className="image-carousel">
+                    {images.map((image, index) => (
+                        <div key={index} className="carousel-item">
+                            <img src={image} alt={`Product image ${index + 1}`} />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="listing-details">
+                    <div className="input-group">
+                        <label>Title:</label>
+                        <input
+                            type="text"
+                            value={editedMetadata.title}
+                            onChange={(e) => handleChange('title', e.target.value)}
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>Price ($):</label>
+                        <input
+                            type="number"
+                            value={editedMetadata.price}
+                            onChange={(e) => handleChange('price', e.target.value)}
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>Category:</label>
+                        <input
+                            type="text"
+                            value={editedMetadata.category}
+                            onChange={(e) => handleChange('category', e.target.value)}
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>Description:</label>
+                        <textarea
+                            value={editedMetadata.description}
+                            onChange={(e) => handleChange('description', e.target.value)}
+                            rows={4}
+                        />
+                    </div>
+                </div>
+
+                <div className="popup-actions">
+                    <button onClick={handleConfirm} className="confirm-button">
+                        Create Listing
+                    </button>
+                    <button onClick={onClose} className="cancel-button">
+                        Cancel
+                    </button>
+                </div>
             </div>
-          </div>
-  
-          <button onClick={onClose} className="continue-button">
-            Continue to next item
-          </button>
         </div>
-      </div>
     );
-  };
+};
+
+// Make it available globally
+window.ListingPopup = ListingPopup;

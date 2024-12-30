@@ -38,10 +38,13 @@
     <!-- Load React and other dependencies -->
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <!-- Load your JavaScript files -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Load React components -->
     <script type="text/babel" src="{{ url_for('static', filename='js/components/ListingPopup.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('static', filename='js/components/CameraApp.jsx') }}"></script>
+
+    <!-- Load main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -12,39 +12,62 @@ image_service = None
 def index():
     return render_template('index.html')
 
-@upload_bp.route('/upload-and-next', methods=['POST'])
-def upload_and_next():
+@upload_bp.route('/generate-metadata', methods=['POST'])
+def generate_metadata():
     try:
-        logger.debug("Received upload request")
+        logger.debug("Received metadata generation request")
         data = request.json
         images = data.get('images', [])
         
-        logger.debug(f"Processing {len(images)} images")
-
         if not images:
             logger.warning("No images provided in request")
             return jsonify({'success': False, 'message': 'No images provided'})
 
-        # Process images and create Shopify listing
-        result = image_service.process_images(images)
+        # Generate metadata using OpenAI and get cropped images
+        metadata = image_service.generate_metadata(images)
         
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'message': f'Successfully created Shopify listing',
-                'shopify_product': result['shopify_product']
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': result['error']
-            })
+        # Get cropped images
+        cropped_images = [f"data:image/jpeg;base64,{image_service.process_image(img)}" for img in images]
+        
+        # Convert Pydantic model to dict
+        metadata_dict = metadata.model_dump()
+        
+        return jsonify({
+            'success': True,
+            'metadata': metadata_dict,
+            'cropped_images': cropped_images
+        })
 
     except Exception as e:
-        logger.error(f"Error in upload_and_next: {str(e)}", exc_info=True)
+        logger.error(f"Error generating metadata: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
-            'message': f'Error processing upload: {str(e)}'
+            'message': f'Error generating metadata: {str(e)}'
+        })
+
+@upload_bp.route('/create-listing', methods=['POST'])
+def create_listing():
+    try:
+        logger.debug("Received create listing request")
+        data = request.json
+        images = data.get('images', [])
+        metadata = data.get('metadata')
+        
+        logger.debug(f"Received metadata: {metadata}")
+        
+        if not images or not metadata:
+            return jsonify({'success': False, 'message': 'Missing images or metadata'})
+
+        # Create Shopify listing with the provided metadata
+        result = image_service.create_shopify_listing(images, metadata)
+        
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"Error creating listing: {str(e)}", exc_info=True)
+        return jsonify({
+            'success': False,
+            'message': f'Error creating listing: {str(e)}'
         })
 
 def init_upload_routes(openai_client):

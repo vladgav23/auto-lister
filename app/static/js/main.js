@@ -94,55 +94,8 @@ takePhotoBtn.addEventListener('click', () => {
 });
 
 // Upload and process photos
-uploadAndNextBtn.addEventListener('click', async () => {
-    if (capturedPhotos.length === 0) {
-        showStatus('Take photos first');
-        return;
-    }
-
-    showStatus('Creating Shopify listing...', 999999);
-
-    try {
-        const response = await fetch('/upload-and-next', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                images: capturedPhotos
-            }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            // Show the listing popup
-            const popupRoot = document.getElementById('popup-root');
-            const shopifyProduct = data.shopify_product;
-
-            ReactDOM.render(
-                React.createElement(ListingPopup, {
-                    isOpen: true,
-                    images: capturedPhotos,
-                    shopifyProduct: shopifyProduct,
-                    onClose: () => {
-                        ReactDOM.unmountComponentAtNode(popupRoot);
-                        // Reset for next listing
-                        capturedPhotos = [];
-                        updateThumbnails();
-                        updatePhotoCount();
-                        // Clear the status message
-                        status.style.display = 'none';
-                    }
-                }),
-                popupRoot
-            );
-        } else {
-            showStatus('Error: ' + data.message);
-        }
-    } catch (error) {
-        showStatus('Error: ' + error.message);
-    }
+uploadAndNextBtn.addEventListener('click', () => {
+    CameraApp.handleUploadAndNext(capturedPhotos, showStatus, updateThumbnails, updatePhotoCount);
 });
 
 // Initialize
