@@ -25,7 +25,7 @@ SHOPIFY_ACCESS_TOKEN=your_access_token
 
 3. Run:
 ```bash
-python app.py
+python run.py
 ```
 
 
