@@ -36,8 +36,3 @@ class Config:
     - Maximum price (for rare/desirable items)
 
     Include brief reasoning for the valuation and any relevant selling tips."""
-    
-    @staticmethod
-    def init_app(app):
-        if not os.path.exists(Config.UPLOAD_FOLDER):
-            os.makedirs(Config.UPLOAD_FOLDER) 
