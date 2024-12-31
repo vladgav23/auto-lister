@@ -12,7 +12,6 @@ def create_app(config_class=Config):
     )
     
     app.config.from_object(config_class)
-    config_class.init_app(app)
     
     global openai_client
     openai_client = OpenAI(api_key=config_class.OPENAI_API_KEY)
