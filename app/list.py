@@ -111,7 +111,8 @@ class Listing:
         completion = self.client.beta.chat.completions.parse(
             model="gpt-4o-mini",
             messages=messages,
-            response_format=ListingMetadata
+            response_format=ListingMetadata,
+            temperature=0
         )
         logger.debug("Received response from OpenAI")
 
