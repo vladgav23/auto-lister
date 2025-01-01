@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, Response
+from functools import wraps
+from ..config import Config
 from ..services.image_service import ImageService
 from ..utils.logger import setup_logger
 
@@ -8,11 +10,34 @@ upload_bp = Blueprint('upload', __name__)
 # Will be set when the blueprint is registered
 image_service = None
 
+def check_auth(username, password):
+    """Check if the password matches"""
+    return password == Config.AUTH_PASSWORD
+
+def authenticate():
+    """Send a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 @upload_bp.route('/')
+@requires_auth
 def index():
     return render_template('index.html')
 
 @upload_bp.route('/generate-metadata', methods=['POST'])
+@requires_auth
 def generate_metadata():
     try:
         logger.debug("Received metadata generation request")
@@ -46,6 +71,7 @@ def generate_metadata():
         })
 
 @upload_bp.route('/create-listing', methods=['POST'])
+@requires_auth
 def create_listing():
     try:
         logger.debug("Received create listing request")

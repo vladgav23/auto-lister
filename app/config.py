@@ -39,3 +39,4 @@ class Config:
     
     In the description, make sure to include the estimated dimensions of the item using the metric measurement system.
     """
+    AUTH_PASSWORD = os.getenv('AUTH_PASSWORD')
