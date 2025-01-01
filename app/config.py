@@ -35,4 +35,7 @@ class Config:
     - Target price (optimal balance of time/value)
     - Maximum price (for rare/desirable items)
 
-    Include brief reasoning for the valuation and any relevant selling tips."""
+    Include brief reasoning for the valuation and any relevant selling tips.
+    
+    In the description, make sure to include the estimated dimensions of the item using the metric measurement system.
+    """

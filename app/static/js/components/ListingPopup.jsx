@@ -10,6 +10,9 @@ const ListingPopup = ({ isOpen, onClose, images, metadata, onConfirm }) => {
         tags: metadata.tags || []
     });
 
+    // Add new state for tracking submission
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     const handleChange = (field, value) => {
         setEditedMetadata(prev => ({
             ...prev,
@@ -18,6 +21,7 @@ const ListingPopup = ({ isOpen, onClose, images, metadata, onConfirm }) => {
     };
 
     const handleConfirm = () => {
+        setIsSubmitting(true);
         onConfirm(editedMetadata);
     };
   
@@ -76,10 +80,18 @@ const ListingPopup = ({ isOpen, onClose, images, metadata, onConfirm }) => {
                 </div>
 
                 <div className="popup-actions">
-                    <button onClick={handleConfirm} className="confirm-button">
-                        Create Listing
+                    <button 
+                        onClick={handleConfirm} 
+                        className="confirm-button"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Creating...' : 'Create Listing'}
                     </button>
-                    <button onClick={onClose} className="cancel-button">
+                    <button 
+                        onClick={onClose} 
+                        className="cancel-button"
+                        disabled={isSubmitting}
+                    >
                         Cancel
                     </button>
                 </div>
