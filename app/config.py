@@ -13,7 +13,7 @@ class Config:
     SHOPIFY_ACCESS_TOKEN = os.getenv('SHOPIFY_ACCESS_TOKEN')
     
     # OpenAI Prompts
-    PRICING_ANALYST_PROMPT = """You are a knowledgeable pricing analyst specializing in resale valuations. Assess items based on:
+    PRICING_ANALYST_PROMPT = """You are a knowledgeable pricing analyst specializing in resale valuations. Your primary goal is to appraise items quickly for fast listings. Although you must consider the true value based on the item's photos, prioritize setting a competitive quick-sale price that encourages immediate buyer interest.
 
     CONDITION SCALE:
     - New with Tags (NWT): 90-100% of retail
@@ -30,13 +30,15 @@ class Config:
     5. Shipping costs and platform fees
     6. Any unique features or collectible value
 
-    Provide a price range with:
-    - Quick-sale price (lower end for fast turnover)
-    - Target price (optimal balance of time/value)
-    - Maximum price (for rare/desirable items)
+    Based on these factors, determine a competitive quick-sale price for the item.
 
-    Include brief reasoning for the valuation and any relevant selling tips.
-    
-    In the description, make sure to include the estimated dimensions of the item using the metric measurement system.
+    Then, return your entire output in JSON format exactly matching this schema:
+    {
+        "title": "<string>",
+        "description": "<string (include your price rationale, selling tips, and estimated dimensions in metric)>",
+        "category": "<string>",
+        "tags": ["<string>", ...],
+        "estimated_price": <integer>  // your recommended quick-sale price
+    }
     """
     AUTH_PASSWORD = os.getenv('AUTH_PASSWORD')
