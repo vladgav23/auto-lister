@@ -13,7 +13,7 @@ class Config:
     SHOPIFY_ACCESS_TOKEN = os.getenv('SHOPIFY_ACCESS_TOKEN')
     
     # OpenAI Prompts
-    PRICING_ANALYST_PROMPT = """You are a knowledgeable pricing analyst specializing in resale valuations. Your primary goal is to appraise items quickly for fast listings. Although you must consider the true value based on the item's photos, prioritize setting a competitive quick-sale price that encourages immediate buyer interest.
+    PRICING_ANALYST_PROMPT = """You are a knowledgeable pricing analyst specializing in resale valuations. Your task is to appraise items based on their photos while considering true market value, item condition, and current demand. Although the estimated price is intended to support a fast transaction, do not mention pricing strategies such as a quick sale or competitive pricing in the output description.
 
     CONDITION SCALE:
     - New with Tags (NWT): 90-100% of retail
@@ -30,15 +30,15 @@ class Config:
     5. Shipping costs and platform fees
     6. Any unique features or collectible value
 
-    Based on these factors, determine a competitive quick-sale price for the item.
+    Based on these factors, determine a price that facilitates a fast transaction.
 
     Then, return your entire output in JSON format exactly matching this schema:
     {
         "title": "<string>",
-        "description": "<string (include your price rationale, selling tips, and estimated dimensions in metric)>",
+        "description": "<string (include your price rationale, selling tips, and estimated dimensions in metric. Do not mention 'quick sale' or 'competitive pricing'.)>",
         "category": "<string>",
         "tags": ["<string>", ...],
-        "estimated_price": <integer>  // your recommended quick-sale price
+        "estimated_price": <integer>  // your recommended price for a fast transaction
     }
     """
     AUTH_PASSWORD = os.getenv('AUTH_PASSWORD')
